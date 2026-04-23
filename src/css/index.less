@@ -1,0 +1,84 @@
+@bg: #ffffff;
+@card-bg: #80a6e2;
+@text: #e2e8f0;
+@primary: #38bdf8;
+@exit:#98d9ff;
+@screen-bg: #676767;
+@screen-card: rgba(15, 23, 42, 0.8);
+@screen-red: #eba1a1;
+
+body {
+  margin: 0;
+  color: @text;
+  font-family: Arial, sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1; /* 自动撑满剩余空间 */
+}
+
+.container {
+  padding: 4vw;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  border-bottom: 2px solid #94a3b8;
+  background: linear-gradient(90deg, @primary, #818cf8);
+  -webkit-background-clip: text;
+  background-clip: text;         
+  color: transparent;
+}
+.desc {
+  font-size: 3.2vw;
+  color: #94a3b8;
+  margin-top: 2vw;
+  line-height: 1.6;
+}
+.chart-container {
+  width: 100%;
+  height: 80%;
+  display: flex;
+}
+.chart {
+  flex: 1;
+  min-height: 300px; /* ✅ 关键 */
+}
+
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.submenu {
+  padding-left: 15px;
+}
+
+.menu li:hover {
+  background: #278ebecd;
+}
+
+.exit {
+  margin-top: 20px;
+  color: @exit;
+}
+
+
+
