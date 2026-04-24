@@ -25,7 +25,6 @@ let chart = null
 
 // 状态
 const isDrillDown = ref(false)
-let currentMap = 'china'
 
 // ================= 初始化 =================
 const initChart = async () => {
@@ -33,11 +32,11 @@ const initChart = async () => {
     chart.dispose()
   }
 
-  await nextTick() // ❗确保DOM渲染完成
+  await nextTick() // 确保DOM渲染完成
 
   chart = echarts.init(chartRef.value)
 
-  // 🔥 暴露给首页做地图联动
+  // 暴露给首页做地图联动
   window.mapChart = chart
 
   window.addEventListener('resize', resizeChart)
@@ -79,7 +78,7 @@ const loadMap = async (mapName, url) => {
 // ================= 配置 =================
 const getOption = (mapName, data) => ({
   title: {
-    text: '全国桥梁分布',
+    text: mapName === 'china' ? '全国桥梁分布' : `${mapName}桥梁分布`,
     left: 'center',
     top:30,
     textStyle: {
@@ -157,7 +156,6 @@ const bindClick = () => {
     const code = mapStore.getProvinceCode(province)
 
     isDrillDown.value = true
-    currentMap = province
 
     await renderMap(
       province,
@@ -169,7 +167,6 @@ const bindClick = () => {
 // ================= 返回 =================
 const goBack = async () => {
   isDrillDown.value = false
-  currentMap = 'china'
 
   await renderMap(
     'china',
