@@ -25,6 +25,9 @@
         <div class="card">
           <Distribution />
         </div>
+        <button @click="go('/comparative_anlysis')">
+          数据对比分析
+        </button>
       </div>
 
       <div class="center">

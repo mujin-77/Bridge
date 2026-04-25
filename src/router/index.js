@@ -7,7 +7,8 @@ const routes = [
   { path: '/DataScreen', component: () => import('../views/DataScreen.vue') },
   { path: '/Dataset', component: () => import('../views/Dataset.vue') },
   { path: '/login', component: () => import('../views/Dataset/LoginPage.vue') },
-  { path: '/BridgeMaterial', component: () => import('../views/DataScreen/BridgeMaterial.vue') },
+  
+  { path: '/comparative_anlysis', component: () => import('../views/DataScreen/comparative_anlysis.vue') },
   { path: '/Development', component: () => import('../views/DataScreen/BridgeDevelopment.vue') },
   { path: '/BridgeTypes', component: () => import('../views/DataScreen/BridgeTypes.vue') },
   { path: '/BridgeTechnology', component: () => import('../views/DataScreen/BridgeTechnology.vue') },
