@@ -1,62 +1,60 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useBridgeStore = defineStore('bridge', {
   state: () => ({
     list: [],
     currentType: '',
-    allData: [
-      {
-        'id': 1,
-        'name': '赵州桥',
-        'dynasty': '隋朝',
-        'year': 605,
-        'province': '河北',
-        'location': '河北赵县',
-        'type': '石拱桥',
-        'length': 64.4,
-        'span': 37.02,
-        'material': '石材'
-      },
-      {
-        'id': 2,
-        'name': '卢沟桥',
-        'dynasty': '金朝',
-        'year': 1189,
-        'province': '北京',
-        'location': '北京丰台',
-        'type': '石拱桥',
-        'length': 266.5,
-        'span': 21.3,
-        'material': '石材'
-      },
-      {
-        'id': 3,
-        'name': '广济桥',
-        'dynasty': '宋朝',
-        'year': 1171,
-        'province': '广东',
-        'location': '广东潮州',
-        'type': '梁桥',
-        'length': 518,
-        'span': 24.0,
-        'material': '石材'
-      },
-    
-    ],
+    allData: []
   }),
 
   actions: {
-    // 按类型筛选
-    // async setType(type) {
-    // const res = await getBridgeList(type)
-    // this.list=res
- 
-    setType(type) {
-      if (type === '全部') {
-        this.list = this.allData
-      } else {
-        this.list = this.allData.filter(i => i.type === type)
+    // 请求后端数据
+    async fetchData() {
+      try {
+        const res = await axios.get('http://localhost:3000/bridges')
+        this.allData = res.data
+        this.list = res.data
+      } catch (err) {
+        console.error('获取数据失败:', err)
       }
+    },
+
+    mapBridgeType(type) {
+      if (!type) return ''
+
+      if (type.includes('拱')) return '拱式桥'
+      if (type.includes('梁')) return '梁式桥'
+      if (type.includes('斜拉')) return '斜拉桥'
+      if (type.includes('悬索')) return '悬索桥'
+      if (type.includes('钢')) return '钢架桥'
+      if (type.includes('浮')) return '浮桥'
+
+      return '其他'
+    },
+
+    setType(type) {
+      this.currentType = type
+      this.filterData()
+    },
+
+    filterData(keyword = '') {
+      this.list = this.allData.filter(item => {
+        const matchType =
+          !this.currentType ||
+          this.currentType === '全部' ||
+          this.mapBridgeType(item.type) === this.currentType
+
+        const matchKeyword =
+          item.name.includes(keyword) ||
+          item.location.includes(keyword)
+
+        return matchType && matchKeyword
+      })
+    },
+
+    init() {
+      this.fetchData()
     }
   }
 })

@@ -204,7 +204,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed,onMounted,watch } from 'vue'
 import { useBridgeStore } from '@/store/Dataset'
 import { useNavigate } from '@/hooks/useNavigate.js'
 import Form from '@/components/form/form.vue'
@@ -223,29 +223,20 @@ const currentPage = ref('data')
 const currentTitle = ref('')
 
 // 桥梁类型
-const bridgeTypes = ['梁式桥', '拱式桥', '斜拉桥', '悬索桥']
+const bridgeTypes = ['梁式桥', '拱式桥', '斜拉桥', '悬索桥','钢架桥','浮桥']
 
 //搜索
 const keyword = ref('')
-const filteredData = computed(() => {
-  return bridgeStore.list.filter(item =>
-    item.name.includes(keyword.value) ||
-    item.location.includes(keyword.value)
-  )
+watch(keyword, (val) => {
+  bridgeStore.filterData(val)
 })
-// 数据
-//接口import { useBridgeStore } from '@/store/bridge'
-//const bridgeStore = useBridgeStore()
-// const selectType = async (type) => {
-//   await bridgeStore.fetchList(type)
-// }
-//表格<tr v-for="item in bridgeStore.list">
-
 
 const bridgeStore = useBridgeStore()
 bridgeStore.setType('全部')
-
-
+onMounted(() => {
+  bridgeStore.init()
+})
+const filteredData = computed(() => bridgeStore.list)
 // 桥梁点击
 const selectType = (type) => {
   currentPage.value = 'data'
@@ -266,19 +257,10 @@ const selectBook = (book) => {
 
 
 // 搜索/过滤条件（示例）
-const searchKeyword = ref('')
 const drawerSize = computed(() => {
   return window.innerWidth > 1000 ? '30%' : '50%'
 })
-// 计算属性：过滤后的数据
-const filtered_editData = computed(() => {
-  const list = bridgeStore.list  // 如果 list 是 ref，需用 .value；若是 reactive 则直接
-  if (!searchKeyword.value) return list
-  return list.filter(item =>
-    item.name.includes(keyword.value) ||
-    item.location.includes(keyword.value)
-  )
-})
+
 // 编辑抽屉相关状态
 const editDrawerVisible = ref(false)
 const editForm = ref({ name: '', type: '', year: '', location: '' })
@@ -287,7 +269,7 @@ const editIndex = ref(null)  // 保存原始数组中的真实索引
 // 点击编辑按钮
 const editRow = (indexInFiltered) => {
   // 1. 从过滤后的数据中获取当前行对象
-  const row = filtered_editData.value[indexInFiltered]
+  const row = filteredData.value[indexInFiltered]
   if (!row) return
 
   // 2. 在原始数组中查找该对象的真实索引（若对象引用不变可直接用 findIndex）
@@ -320,7 +302,7 @@ const cancelEdit = () => {
 
 // 删除行（示例）
 const deleteRow = (indexInFiltered) => {
-  const row = filtered_editData.value[indexInFiltered]
+  const row = filteredData.value[indexInFiltered]
   const list = bridgeStore.list
   const realIndex = list.findIndex(item => item === row)
   if (realIndex !== -1) {
