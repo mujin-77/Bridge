@@ -158,7 +158,32 @@
               </tr>
             </tbody>
           </table>
+          <div class="pagination">
+            <button
+              :disabled="bridgeStore.page === 1"
+              @click="changePage(bridgeStore.page - 1)"
+            >
+              上一页
+            </button>
+
+            <button
+              v-for="p in bridgeStore.totalPages"
+              :key="p"
+              :class="{ active: p === bridgeStore.page }"
+              @click="changePage(p)"
+            >
+              {{ p }}
+            </button>
+
+            <button
+              :disabled="bridgeStore.page === bridgeStore.totalPages"
+              @click="changePage(bridgeStore.page + 1)"
+            >
+              下一页
+            </button>
+          </div>
         </div>
+        
         <!-- 浮层编辑表单 -->
         <el-drawer
           v-model="editDrawerVisible"
@@ -223,18 +248,21 @@ const currentPage = ref('data')
 const currentTitle = ref('')
 
 // 桥梁类型
-const bridgeTypes = ['梁式桥', '拱式桥', '斜拉桥', '悬索桥','钢架桥','浮桥']
+const bridgeTypes = ['梁式桥', '拱式桥', '斜拉桥', '悬索桥','钢架桥','浮桥','其他']
 
 //搜索
 const keyword = ref('')
 watch(keyword, (val) => {
-  bridgeStore.filterData(val)
+  bridgeStore.setKeyword(val)
 })
-
+//分页
+const changePage = (page) => {
+  bridgeStore.fetchData(page, bridgeStore.pageSize)
+}
 const bridgeStore = useBridgeStore()
 bridgeStore.setType('全部')
 onMounted(() => {
-  bridgeStore.init()
+  bridgeStore.fetchData()
 })
 const filteredData = computed(() => bridgeStore.list)
 // 桥梁点击
@@ -438,5 +466,21 @@ table {
   tr:nth-child(even) {
     background: rgba(15, 23, 42, 0.3);
   }
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: #409eff;
+  color: white;
 }
 </style>

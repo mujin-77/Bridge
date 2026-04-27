@@ -5,52 +5,48 @@ export const useBridgeStore = defineStore('bridge', {
   state: () => ({
     list: [],
     currentType: '',
-    allData: []
+    keyword: '',
+
+    total: 0,
+    page: 1,
+    pageSize: 15,
+    totalPages: 0
   }),
 
   actions: {
-    // 请求后端数据
-    async fetchData() {
+    // 获取分页数据
+    async fetchData(page = 1) {
       try {
-        const res = await axios.get('http://localhost:3000/bridges')
-        this.allData = res.data
-        this.list = res.data
+        const res = await axios.get('http://localhost:3000/bridges', {
+          params: {
+            page,
+            pageSize: this.pageSize,
+            keyword: this.keyword,
+            type: this.currentType
+          }
+        })
+
+        this.list = res.data.list
+        this.total = res.data.total
+        this.page = res.data.page
+        this.pageSize = res.data.pageSize
+        this.totalPages = res.data.totalPages
+
       } catch (err) {
         console.error('获取数据失败:', err)
       }
     },
 
-    mapBridgeType(type) {
-      if (!type) return ''
-
-      if (type.includes('拱')) return '拱式桥'
-      if (type.includes('梁')) return '梁式桥'
-      if (type.includes('斜拉')) return '斜拉桥'
-      if (type.includes('悬索')) return '悬索桥'
-      if (type.includes('钢')) return '钢架桥'
-      if (type.includes('浮')) return '浮桥'
-
-      return '其他'
-    },
-
+    // 设置类型筛选
     setType(type) {
       this.currentType = type
-      this.filterData()
+      this.fetchData(1)
     },
 
-    filterData(keyword = '') {
-      this.list = this.allData.filter(item => {
-        const matchType =
-          !this.currentType ||
-          this.currentType === '全部' ||
-          this.mapBridgeType(item.type) === this.currentType
-
-        const matchKeyword =
-          item.name.includes(keyword) ||
-          item.location.includes(keyword)
-
-        return matchType && matchKeyword
-      })
+    // 设置搜索
+    setKeyword(keyword) {
+      this.keyword = keyword
+      this.fetchData(1)
     },
 
     init() {
