@@ -1,15 +1,17 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { getBridges } from '@/utils/api/bridge'
 
 export const useBridgeStore = defineStore('bridge', {
   state: () => ({
     list: [],
+    allData: [],
+
     currentType: '',
     keyword: '',
 
-    total: 0,
     page: 1,
     pageSize: 15,
+    total: 0,
     totalPages: 0
   }),
 
@@ -17,36 +19,42 @@ export const useBridgeStore = defineStore('bridge', {
     // 获取分页数据
     async fetchData(page = 1) {
       try {
-        const res = await axios.get('http://localhost:3000/bridges', {
-          params: {
-            page,
-            pageSize: this.pageSize,
-            keyword: this.keyword,
-            type: this.currentType
-          }
+        const res = await getBridges({
+          page,
+          pageSize: this.pageSize,
+          type: this.currentType === '全部' ? '' : this.currentType,
+          keyword: this.keyword
         })
 
-        this.list = res.data.list
-        this.total = res.data.total
-        this.page = res.data.page
-        this.pageSize = res.data.pageSize
-        this.totalPages = res.data.totalPages
+        const data = res.data
 
+        this.list = data.list
+        this.allData = data.list
+
+        this.page = data.page
+        this.pageSize = data.pageSize
+        this.total = data.total
+        this.totalPages = data.totalPages
       } catch (err) {
         console.error('获取数据失败:', err)
       }
     },
 
-    // 设置类型筛选
+    // 类型筛选
     setType(type) {
       this.currentType = type
       this.fetchData(1)
     },
 
-    // 设置搜索
+    // 搜索
     setKeyword(keyword) {
       this.keyword = keyword
       this.fetchData(1)
+    },
+
+    // 分页
+    changePage(page) {
+      this.fetchData(page)
     },
 
     init() {

@@ -50,7 +50,7 @@ const resizeChart = () => {
 // ================= 数据 =================
 const mapStore = useMapStore()
 
-const fetchData = async (level) => {
+const fetchData = (level) => {
   if (level === 'china') {
     return mapStore.getChinaData
   } else {
@@ -93,7 +93,7 @@ const getOption = (mapName, data) => ({
 
   visualMap: {
     min: 0,
-    max: 500,
+    max: 100,
     left: 'left',
     bottom: 20,
     calculable: true,
@@ -177,7 +177,9 @@ const goBack = async () => {
 // ================= 生命周期 =================
 onMounted(async () => {
   await initChart()
-
+  // 先请求数据
+  await mapStore.fetchMapData()
+  // 再渲染地图
   await renderMap(
     'china',
     'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'

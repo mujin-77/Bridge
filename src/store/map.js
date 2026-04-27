@@ -1,141 +1,53 @@
 import { defineStore } from 'pinia'
+import { getBridgesByProvince } from '@/utils/api/bridge'
+
 
 export const useMapStore = defineStore('map', {
   state: () => ({
     // 全国数据
-    chinaData: [
-      { name: '北京市', value:'' },
-      { name: '天津市', value: 289 },
-      { name: '河北省', value: '' },
-      { name: '山西省', value: 312 },
-      { name: '内蒙古自治区', value: 198 },
-      { name: '辽宁省', value: '' },
-      { name: '吉林省', value: 267 },
-      { name: '黑龙江省', value: 358 },
-      { name: '上海市', value: '' },
-      { name: '江苏省', value: 521 },
-      { name: '浙江省', value: 51 },
-      { name: '安徽省', value: ''},
-      { name: '福建省', value: ''},
-      { name: '江西省', value: 289 },
-      { name: '山东省', value: ''},
-      { name: '河南省', value: '' },
-      { name: '湖北省', value: 396 },
-      { name: '湖南省', value: 370 },
-      { name: '广东省', value: '' },
-      { name: '广西壮族自治区', value: '' },
-      { name: '海南省', value: '' },
-      { name: '重庆市', value: 275 },
-      { name: '四川省', value: 300 },
-      { name: '贵州省', value: 264 },
-      { name: '云南省', value: '' },
-      { name: '西藏自治区', value: 115 },
-      { name: '陕西省', value: '' },
-      { name: '甘肃省', value: 233 },
-      { name: '青海省', value: 146 },
-      { name: '宁夏回族自治区', value: 162 },
-      { name: '新疆维吾尔自治区', value: 298 }
-    ],
+    chinaData: [],
 
     // 👉 各省数据（重点）
-    provinceData: {
-      广东省: [
-        { name: '广州市', value: 200 },
-        { name: '深圳市', value: 180 },
-        { name: '佛山市', value: 100 }
-      ],
-      浙江省: [
-        { name: '杭州市', value: 120 },
-        { name: '宁波市', value: 90 }
-      ],
-      湖南省: [
-        { name: '长沙市', value: 20 },
-        { name: '张家界市', value: 60 }
-      ],
-      北京市: [
-        {}
-      ],
-      天津市: [
-        {}
-      ],
-      河北省: [
-        {}
-      ],
-      山西省: [
-        {}
-      ],
-      内蒙古自治区: [
-        {}
-      ],
-      辽宁省: [
-        {}
-      ],
-      吉林省: [
-        {}
-      ],
-      黑龙江省: [
-        {}
-      ],
-      上海市: [
-        {}
-      ],
-      江苏省: [
-        {}
-      ],
-      安徽省: [
-        {}
-      ],
-      福建省: [
-        {}
-      ],
-      江西省: [
-        {}
-      ],
-      山东省: [
-        {}
-      ],
-      河南省: [
-        {}
-      ],
-      湖北省: [
-        {}
-      ],
-      广西壮族自治区: [
-        {}
-      ],
-      海南省: [
-        {}
-      ],
-      重庆市: [
-        {}
-      ],
-      四川省: [
-        {}
-      ],
-      贵州省: [
-        {}
-      ],
-      云南省: [
-        {}
-      ],
-      西藏自治区: [
-        {}
-      ],
-      陕西省:[
-        {}
-      ],
-      甘肃省: [
-        {}
-      ],
-      青海省:[
-        {}
-      ],
-      宁夏回族自治区: [
-        {}
-      ],
-      新疆维吾尔自治区: [
-        {}
-      ]
+    provinceData: {},
+    normalizeProvinceName(name) {
+      const map = {
+        北京市: '北京',
+        天津市: '天津',
+        上海市: '上海',
+        重庆市: '重庆',
+
+        河北省: '河北',
+        山西省: '山西',
+        辽宁省: '辽宁',
+        吉林省: '吉林',
+        黑龙江省: '黑龙江',
+        江苏省: '江苏',
+        浙江省: '浙江',
+        安徽省: '安徽',
+        福建省: '福建',
+        江西省: '江西',
+        山东省: '山东',
+        河南省: '河南',
+        湖北省: '湖北',
+        湖南省: '湖南',
+        广东省: '广东',
+        海南省: '海南',
+        四川省: '四川',
+        贵州省: '贵州',
+        云南省: '云南',
+        陕西省: '陕西',
+        甘肃省: '甘肃',
+        青海省: '青海',
+
+        内蒙古自治区: '内蒙古',
+        广西壮族自治区: '广西',
+        宁夏回族自治区: '宁夏',
+        新疆维吾尔自治区: '新疆',
+        西藏自治区: '西藏'
+      }
+
+
+      return map[name] || name
     },
     provinceCodeMap:{
       '北京市': '110000',
@@ -171,15 +83,77 @@ export const useMapStore = defineStore('map', {
       '新疆维吾尔自治区': '650000'
     }
   }),
-
+  
   getters: {
     getChinaData: (state) => state.chinaData,
 
     getProvinceData: (state) => (provinceName) => {
       return state.provinceData[provinceName] || []
     },
+    getCityFromLocation(location) {
+      if (!location) return '未知'
+
+      // 提取“xx市”
+      const match = location.match(/(.+?市)/)
+      if (match) return match[1]
+
+      return location
+    },
     getProvinceCode: (state) => (name) => {
       return state.provinceCodeMap[name]
     },
+  },
+  actions: {
+    async fetchMapData() {
+      try {
+        const provinces = Object.keys(this.provinceCodeMap)
+
+        const chinaList = []
+        const provinceMap = {}
+
+        for (const provinceName of provinces) {
+          const dbProvince = this.normalizeProvinceName(provinceName)
+          const res = await getBridgesByProvince(dbProvince)
+
+          const list = res.data || []
+
+          chinaList.push({
+            name: provinceName,
+            value: list.length
+          })
+
+          const cityMap = {}
+
+          list.forEach(item => {
+            const city = item.location
+
+            if (!cityMap[city]) {
+              cityMap[city] = 0
+            }
+
+            cityMap[city]++
+          })
+
+          provinceMap[provinceName] = Object.entries(cityMap).map(
+            ([name, value]) => ({
+              name,
+              value
+            })
+          )
+
+          // 没数据也保证存在
+          if (!provinceMap[provinceName].length) {
+            provinceMap[provinceName] = [{}]
+          }
+        }
+
+        this.chinaData = chinaList
+        this.provinceData = provinceMap
+
+      } catch (err) {
+        console.error(err)
+      }
+    }
   }
+
 })

@@ -158,30 +158,12 @@
               </tr>
             </tbody>
           </table>
-          <div class="pagination">
-            <button
-              :disabled="bridgeStore.page === 1"
-              @click="changePage(bridgeStore.page - 1)"
-            >
-              上一页
-            </button>
-
-            <button
-              v-for="p in bridgeStore.totalPages"
-              :key="p"
-              :class="{ active: p === bridgeStore.page }"
-              @click="changePage(p)"
-            >
-              {{ p }}
-            </button>
-
-            <button
-              :disabled="bridgeStore.page === bridgeStore.totalPages"
-              @click="changePage(bridgeStore.page + 1)"
-            >
-              下一页
-            </button>
-          </div>
+          <Pagination
+            :page="bridgeStore.page"
+            :total-pages="bridgeStore.totalPages"
+            :total="bridgeStore.total"
+            @change="bridgeStore.changePage"
+          />
         </div>
         
         <!-- 浮层编辑表单 -->
@@ -231,6 +213,7 @@
 <script setup>
 import { ref, computed,onMounted,watch } from 'vue'
 import { useBridgeStore } from '@/store/Dataset'
+import Pagination from '@/views/Dataset/Pagination.vue'
 import { useNavigate } from '@/hooks/useNavigate.js'
 import Form from '@/components/form/form.vue'
 import Form2 from '@/components/form/form2.vue'
@@ -256,13 +239,10 @@ watch(keyword, (val) => {
   bridgeStore.setKeyword(val)
 })
 //分页
-const changePage = (page) => {
-  bridgeStore.fetchData(page, bridgeStore.pageSize)
-}
 const bridgeStore = useBridgeStore()
 bridgeStore.setType('全部')
 onMounted(() => {
-  bridgeStore.fetchData()
+  bridgeStore.init()
 })
 const filteredData = computed(() => bridgeStore.list)
 // 桥梁点击
