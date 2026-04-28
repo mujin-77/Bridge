@@ -1,41 +1,99 @@
 import { defineStore } from 'pinia'
+import { getMaterialStatistics } from '@/utils/api/bridge'
 
 export const useMaterialStore = defineStore('material', {
   state: () => ({
-    
-    materialData: {
-      xData: ['钢筋混凝土', '预应力混凝土', '钢材', '石料', '混凝土', '木材', '其他'],
-
-      seriesData: [
-        {
-          name: '梁式桥',
-          data: [220, 180, 150, 300, 260, 120, 80]
-        },
-        {
-          name: '拱式桥',
-          data: [100, 120, 90, 400, 300, 150, 60]
-        },
-        {
-          name: '悬索桥',
-          data: [80, 150, 200, 20, 60, 10, 30]
-        },
-        {
-          name: '斜拉桥',
-          data: [120, 200, 250, 10, 80, 5, 20]
-        },
-        {
-          name: '刚架桥',
-          data: [90, 110, 130, 50, 100, 40, 30]
-        },
-        {
-          name: '浮桥',
-          data: [30, 20, 40, 200, 150, 300, 100]
-        }
-      ]
-    }
+    rawData: []
   }),
 
   getters: {
-    getMaterialData: (state) => state.materialData
+    getMaterialData(state) {
+      const materials = [
+        '钢筋混凝土',
+        '预应力混凝土',
+        '钢材',
+        '石材',
+        '混凝土',
+        '木材',
+        '其他'
+      ]
+
+      const bridgeTypes = [
+        '梁式桥',
+        '拱式桥',
+        '悬索桥',
+        '斜拉桥',
+        '刚架桥',
+        '浮桥',
+        '其他'
+      ]
+
+      const seriesData = bridgeTypes.map(type => {
+        const data = materials.map(material => {
+          const total = state.rawData
+            .filter(item => {
+              const materialMatch = item.material === material
+
+              let typeMatch = false
+
+              if (type === '梁式桥') {
+                typeMatch = item.type.includes('梁')
+              }
+
+              if (type === '拱式桥') {
+                typeMatch = item.type.includes('拱')
+              }
+
+              if (type === '悬索桥') {
+                typeMatch = item.type.includes('悬索')
+              }
+
+              if (type === '斜拉桥') {
+                typeMatch = item.type.includes('斜拉')
+              }
+
+              if (type === '刚架桥') {
+                typeMatch = item.type.includes('钢')
+              }
+
+              if (type === '浮桥') {
+                typeMatch = item.type.includes('浮')
+              }
+
+              if (type === '其他') {
+                typeMatch =
+                  !item.type.includes('梁') &&
+                  !item.type.includes('拱') &&
+                  !item.type.includes('悬索') &&
+                  !item.type.includes('斜拉') &&
+                  !item.type.includes('钢') &&
+                  !item.type.includes('浮')
+              }
+
+              return materialMatch && typeMatch
+            })
+            .reduce((sum, item) => sum + item.count, 0)
+
+          return total
+        })
+
+        return {
+          name: type,
+          data
+        }
+      })
+
+      return {
+        xData: materials,
+        seriesData
+      }
+    }
+  },
+
+  actions: {
+    async fetchMaterialStatistics() {
+      const res = await getMaterialStatistics()
+      this.rawData = res.data
+    }
   }
 })

@@ -67,12 +67,12 @@ const getOption = () => ({
   },
 
   series: [
-    ...Array(6).fill({
+    ...((bridgeStore.chartDataset || []).slice(1)).map(() => ({
       type: 'line',
       smooth: true,
       seriesLayoutBy: 'row',
       emphasis: { focus: 'series' }
-    }),
+    })),
 
     {
       type: 'pie',
@@ -80,12 +80,12 @@ const getOption = () => ({
       radius: '30%',
       center: ['50%', '25%'],
       label: {
-        formatter: '{b}: {@夏} ({d}%)'
+        formatter: '{b}: {@汉朝} ({d}%)'
       },
       encode: {
         itemName: '桥梁类型',
-        value: '夏',
-        tooltip: '夏'
+        value: '汉朝',
+        tooltip: '汉朝'
       }
     }
   ]
@@ -137,6 +137,7 @@ const renderChart = () => {
 // 生命周期
 onMounted(async () => {
   await nextTick()
+  await bridgeStore.fetchStatistics()
   initChart()
   renderChart()
   

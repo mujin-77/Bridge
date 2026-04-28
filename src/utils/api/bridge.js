@@ -4,16 +4,17 @@ import request from '@/utils/request'
 export const getBridges = (params) => {
   return request.get('/bridges', { params })
 }
-
+// 按朝代
+export const getBridgesByDynasty = () => {
+  return request.get('/bridges/by-dynasty')
+}
 // 按省查询
 export const getBridgesByProvince = (province) => {
   return request.get('/bridges/by-province', {
     params: { province }
   })
 }
-// 按朝代
-export const getBridgesByDynasty = (dynasty) => {
-  return request.get('/bridges/by-dynasty', {
-    params: { dynasty }
-  })
+// 按材料查询
+export const getMaterialStatistics = () => {
+  return request.get('/bridges/by-material')
 }

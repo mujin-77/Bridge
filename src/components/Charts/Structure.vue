@@ -127,6 +127,7 @@ const renderChart = async () => {
 // ================= 生命周期 =================
 onMounted(async () => {
   initChart()
+  await materialStore.fetchMaterialStatistics()
   await renderChart()
 })
 

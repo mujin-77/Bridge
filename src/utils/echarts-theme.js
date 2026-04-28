@@ -1,10 +1,11 @@
 export const chinaColors = [
-  '#f87171',
-  '#e99d9d', 
+  '#dbe99d', 
+  '#f88e8e',
   '#7fd0f3',
   '#f6cb5f', 
   '#57e4b0',
-  '#b29ef0'
+  '#b29ef0',
+  '#faaff4db',
 ]
 
 export const chinaTechTheme = {
