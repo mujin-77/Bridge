@@ -8,7 +8,6 @@ export const useBridgeStore = defineStore('bridge', {
 
   getters: {
     chartDataset(state) {
-      console.log('rawData in getter:', state.rawData)
       const dynasties = [
         '汉朝',
         '隋朝',

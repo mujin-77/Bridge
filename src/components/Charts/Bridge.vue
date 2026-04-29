@@ -100,8 +100,6 @@ const renderChart = () => {
   chart.off('click')
 
   chart.on('click', (params) => {
-    console.log('点击:', params)
-
     router.push({
       path: '/BridgeTypes',
       query: {

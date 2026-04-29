@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick} from 'vue'
 import * as echarts from 'echarts'
 import { useMapStore } from '@/store/map'
 
@@ -40,6 +40,8 @@ const initChart = async () => {
   window.mapChart = chart
 
   window.addEventListener('resize', resizeChart)
+
+  bindClick()
 }
 
 // ================= resize =================
@@ -68,7 +70,6 @@ const loadMap = async (mapName, url) => {
 
   const res = await fetch(url)
   const geoJSON = await res.json()
-
   echarts.registerMap(mapName, geoJSON)
   mapCache.add(mapName)
 
@@ -76,69 +77,134 @@ const loadMap = async (mapName, url) => {
 }
 
 // ================= 配置 =================
-const getOption = (mapName, data) => ({
-  title: {
-    text: mapName === 'china' ? '全国桥梁分布' : `${mapName}桥梁分布`,
-    left: 'center',
-    top:30,
-    textStyle: {
-      color: '#f87171',
-      fontSize: 20
-    }
-  },
+const getOption = (mapName, data) => {
+  const maxValue = Math.max(...data.map(i => i.value || 0))
 
-  tooltip: {
-    trigger: 'item'
-  },
+  const isChina = mapName === 'china'
 
-  visualMap: {
-    min: 0,
-    max: 100,
-    left: 'left',
-    bottom: 20,
-    calculable: true,
-    textStyle: {
-      color: '#e2e8f0'
+  return {
+    title: {
+      text: isChina ? '全国桥梁分布' : `${mapName}桥梁分布`,
+      left: 'center',
+      top: 30,
+      textStyle: {
+        color: '#f87171',
+        fontSize: 20
+      }
     },
-    inRange: {
-      color: ['#fff', '#e99d9d', '#f87171']
-    }
-  },
 
-  series: [
-    {
-      name: '桥梁数量',
-      type: 'map',
-      map: mapName,
-      roam: true,
+    tooltip: {
+      trigger: 'item'
+    },
 
-      label: {
-        show: true,
-        color: '#676767',
-        fontSize: 10
+    visualMap: {
+      min: 0,
+
+      // 全国和市级分开
+      max: isChina
+        ? Math.max(maxValue, 100)
+        : Math.max(maxValue, 50),
+
+      left: 'left',
+      bottom: 20,
+      calculable: true,
+
+      textStyle: {
+        color: '#e2e8f0'
       },
 
-      emphasis: {
+      inRange: {
+        color: [
+          '#fff5f5',
+          '#fca5a5', 
+          '#e95252e9']
+      }
+    },
+
+    series: [
+      {
+        name: '桥梁数量',
+        type: 'map',
+        selectedMode: 'single',
+        map: mapName,
+        roam: true,
+
         label: {
+          show: true,
           color: '#676767',
+          fontSize: 10
         },
-        itemStyle: {
-          areaColor: '#f87171'
-        }
-      },
 
-      data
-    }
-  ]
-})
+        emphasis: {
+          label: {
+            color: '#111827'
+          },
+          itemStyle: {
+            areaColor: '#feffbe'
+          }
+        },
+
+        select: {
+          label: {
+            color: '#000'
+          },
+          itemStyle: {
+            areaColor: '#feffbe'
+          }
+        },
+
+        data
+      }
+    ]
+  }
+}
 
 // ================= 渲染 =================
 const renderMap = async (mapName, url) => {
   await loadMap(mapName, url)
-
   const data = await fetchData(mapName)
 
-  const option = getOption(mapName, data)
+  const geoJson = echarts.getMap(mapName).geoJSON
+  const mapNames = geoJson.features.map(f => f.properties.name)
+
+  const fixedData = data.map(item => {
+    let name = item.name
+
+    // 完全匹配
+    if (mapNames.includes(name)) {
+      return item
+    }
+
+    // 尝试补市
+    if (mapNames.includes(name + '市')) {
+      return {
+        ...item,
+        name: name + '市'
+      }
+    }
+
+    // 尝试补州
+    if (mapNames.includes(name + '州')) {
+      return {
+        ...item,
+        name: name + '州'
+      }
+    }
+    // 匹配 “xx自治州”
+    const autoStateMatch = mapNames.find(n =>
+      n.includes(name) && n.includes('自治州')
+    )
+
+    if (autoStateMatch) {
+      return {
+        ...item,
+        name: autoStateMatch
+      }
+    }
+
+    return item
+  })
+  const option = getOption(mapName, fixedData)
 
   chart.setOption(option, true)
 }
@@ -149,6 +215,9 @@ const bindClick = () => {
     if (isDrillDown.value) return
 
     const province = params.name
+    console.log('点击省份:', province)
+    console.log('所有省份key:', Object.keys(mapStore.provinceData))
+    console.log('当前省数据:', mapStore.provinceData[province])
 
     const data = mapStore.getProvinceData(province)
     if (!data.length) return
@@ -185,7 +254,6 @@ onMounted(async () => {
     'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'
   )
 
-  bindClick()
 })
 
 onBeforeUnmount(() => {

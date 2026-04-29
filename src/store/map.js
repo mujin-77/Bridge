@@ -7,7 +7,7 @@ export const useMapStore = defineStore('map', {
     // 全国数据
     chinaData: [],
 
-    // 👉 各省数据（重点）
+    // 各省数据（重点）
     provinceData: {},
     normalizeProvinceName(name) {
       const map = {
@@ -94,7 +94,10 @@ export const useMapStore = defineStore('map', {
       if (!location) return '未知'
 
       // 提取“xx市”
-      const match = location.match(/(.+?市)/)
+      const match = 
+        location.match(/(.+?市)/)||
+        location.match(/(.+?区)/)||
+        location.match(/(.+?州)/)
       if (match) return match[1]
 
       return location
@@ -104,6 +107,22 @@ export const useMapStore = defineStore('map', {
     },
   },
   actions: {
+    extractAreaName(location) {
+      if (!location) return '未知'
+      const match = location.match(/([\u4e00-\u9fa5]{2,})/)
+
+      if (!match) return location
+
+      // 去掉省份前缀
+      location = location.replace( /^(北京|天津|上海|重庆|河北|山西|辽宁|吉林|黑龙江|江苏|浙江|安徽|福建|江西|山东|河南|湖北|湖南|广东|海南|四川|贵州|云南|陕西|甘肃|青海|台湾|内蒙古|广西|宁夏|新疆|西藏)/,
+        '')
+
+      // 如果有连接符，只取前面
+      location = location.split('-')[0]
+      
+
+      return location
+    },
     async fetchMapData() {
       try {
         const provinces = Object.keys(this.provinceCodeMap)
@@ -125,7 +144,7 @@ export const useMapStore = defineStore('map', {
           const cityMap = {}
 
           list.forEach(item => {
-            const city = item.location
+            const city = this.extractAreaName(item.location)
 
             if (!cityMap[city]) {
               cityMap[city] = 0

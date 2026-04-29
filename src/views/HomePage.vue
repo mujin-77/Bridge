@@ -16,7 +16,7 @@
         <span class="corner lb" />
         <span class="corner rb" />
         <h2>数据大屏</h2>
-        <p>展示中国桥梁发展数据</p>
+        <p>中国古代桥梁结构与技术可视化</p>
       </div>
 
       <div

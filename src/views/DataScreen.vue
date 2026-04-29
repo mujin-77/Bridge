@@ -65,11 +65,7 @@ import Structure from '@/components/Charts/Structure.vue'
 import Technology from '@/components/Charts/Technology.vue'
 import Distribution from '@/components/Charts/Distribution.vue'
 
-const totalBridge = ref(0)
-const totalType = ref(0)
-const totalTech = ref(0)
 const currentTime = ref('')
-
 
 let timeTimer = null
 const updateTime = () => {
@@ -85,60 +81,17 @@ const updateTime = () => {
 }
 
 let timer = null
-const startDataAnimation = () => {
-  timer = setInterval(() => {
-    if (totalBridge.value < 5000) totalBridge.value += 37
-    if (totalType.value < 12) totalType.value += 0.2
-    if (totalTech.value < 20) totalTech.value += 0.3
-  }, 100)
-}
-
-let mapTimer = null
-let mapChart = null // 用于存实例
-
-const provinces = ['北京', '广东', '四川', '浙江', '江苏']
-let index = 0
-
-const startMapLoop = () => {
-  mapTimer = setInterval(() => {
-    const name = provinces[index]
-
-    if (mapChart) {
-      // 取消高亮
-      mapChart.dispatchAction({
-        type: 'downplay'
-      })
-
-      // 高亮当前省
-      mapChart.dispatchAction({
-        type: 'highlight',
-        name
-      })
-
-      // 显示 tooltip
-      mapChart.dispatchAction({
-        type: 'showTip',
-        name
-      })
-    }
-
-    index = (index + 1) % provinces.length
-  }, 3000)
-}
 
 onMounted(async() => {
   updateTime()
 
   await nextTick()
-  startDataAnimation()
-  startMapLoop()
   
   timeTimer = setInterval(updateTime, 1000)
 })
 
 onBeforeUnmount(() => {
   clearInterval(timer)
-  clearInterval(mapTimer)
   clearInterval(timeTimer)
 })
 </script>
@@ -279,7 +232,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-/* 🔥 动画 */
+/* 动画 */
 @keyframes borderFlow {
   0% {
     background-position: 0% 50%;

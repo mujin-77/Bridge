@@ -1,6 +1,7 @@
-//自定义组合式函数（hook）
+// 自定义组合式函数（hook）
 
 import { useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 
 export function useNavigate() {
   const router = useRouter()
@@ -15,21 +16,38 @@ export function useNavigate() {
     router.push({ path, query })
   }
 
-
-  const login = () => {
+  // 登录校验跳转
+  const login = async () => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      alert('请先登录')
+      try {
+        await ElMessageBox.confirm(
+          '请先登录后再访问数据集页面',
+          '提示',
+          {
+            confirmButtonText: '去登录',
+            cancelButtonText: '取消',
+            type: 'warning',
+            center: true
+          }
+        )
 
-      router.push({
-        path: '/login',
-        query: { redirect: '/Dataset' } // ⭐关键
-      })
+        // 点击“去登录”
+        router.push({
+          path: '/login',
+          query: { redirect: '/Dataset' }
+        })
+      } catch (error) {
+        // 点击取消，不处理
+        console.error(error)
+      }
     } else {
       router.push('/Dataset')
     }
   }
+
+  // 退出登录
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('role')
@@ -41,6 +59,6 @@ export function useNavigate() {
     go,
     goWithQuery,
     login,
-    logout,
+    logout
   }
 }
