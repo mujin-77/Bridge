@@ -9,7 +9,7 @@ const routes = [
   { path: '/login', component: () => import('../views/Dataset/LoginPage.vue') },
   
   { path: '/comparative_anlysis', component: () => import('../views/DataScreen/comparative_anlysis.vue') },
-  { path: '/Development', component: () => import('../views/DataScreen/BridgeDevelopment.vue') },
+  { path: '/Development', component: () => import('../views/DataScreen/1.vue') },
   { path: '/BridgeTypes', component: () => import('../views/DataScreen/BridgeTypes.vue') },
   { path: '/BridgeTechnology', component: () => import('../views/DataScreen/BridgeTechnology.vue') },
 ]
