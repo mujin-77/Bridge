@@ -9,6 +9,17 @@
     <div class="cards">
       <div
         class="card"
+        @click="go('/about')"
+      >
+        <span class="corner lt" />
+        <span class="corner rt" />
+        <span class="corner lb" />
+        <span class="corner rb" />
+        <h2>桥梁发展</h2>
+        <p>中国桥梁发展状况介绍</p>
+      </div>
+      <div
+        class="card"
         @click="go('/DataScreen')"
       >
         <span class="corner lt" />
@@ -29,18 +40,6 @@
         <span class="corner rb" />
         <h2>数据集管理</h2>
         <p>需要登录后访问</p>
-      </div>
-
-      <div
-        class="card"
-        @click="go('/about')"
-      >
-        <span class="corner lt" />
-        <span class="corner rt" />
-        <span class="corner lb" />
-        <span class="corner rb" />
-        <h2>项目介绍</h2>
-        <p>中国桥梁发展可视化平台</p>
       </div>
     </div>
   </div>
