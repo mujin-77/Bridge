@@ -83,14 +83,15 @@ const getOption = () => {
   return {
     title: {
       text: '桥梁类型与施工工艺占比分析',
+      top: -3,
       textStyle: {
         color: '#f87171'
       },
     },
     grid: {
-      top: '20%',
-      left: '12%',
-      right: '8%',
+      top: '15%',
+      left: '15%',
+      right: '10%',
       bottom: '20%'
     },
     emphasis: {

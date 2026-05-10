@@ -32,11 +32,10 @@ const initChart = async () => {
     chart.dispose()
   }
 
-  await nextTick() // 确保DOM渲染完成
+  await nextTick()
 
   chart = echarts.init(chartRef.value)
 
-  // 暴露给首页做地图联动
   window.mapChart = chart
 
   window.addEventListener('resize', resizeChart)
@@ -79,17 +78,16 @@ const loadMap = async (mapName, url) => {
 // ================= 配置 =================
 const getOption = (mapName, data) => {
   const maxValue = Math.max(...data.map(i => i.value || 0))
-
   const isChina = mapName === 'china'
 
   return {
     title: {
       text: isChina ? '全国桥梁分布' : `${mapName}桥梁分布`,
       left: 'center',
-      top: 30,
+      top: 10,
       textStyle: {
         color: '#f87171',
-        fontSize: 20
+        fontSize: 14
       }
     },
 
@@ -99,25 +97,16 @@ const getOption = (mapName, data) => {
 
     visualMap: {
       min: 0,
-
-      // 全国和市级分开
-      max: isChina
-        ? Math.max(maxValue, 200)
-        : Math.max(maxValue, 50),
-
+      max: isChina ? Math.max(maxValue, 200) : Math.max(maxValue, 50),
       left: 'left',
-      bottom: 20,
+      bottom: 5,
       calculable: true,
-
       textStyle: {
-        color: '#e2e8f0'
+        color: '#e2e8f0',
+        fontSize: 10
       },
-
       inRange: {
-        color: [
-          '#fff5f5',
-          '#fca5a5', 
-          '#e95252e9']
+        color: ['#fff5f5', '#fca5a5', '#e95252e9']
       }
     },
 
@@ -169,43 +158,15 @@ const renderMap = async (mapName, url) => {
 
   const fixedData = data.map(item => {
     let name = item.name
-
-    // 完全匹配
-    if (mapNames.includes(name)) {
-      return item
-    }
-
-    // 尝试补市
-    if (mapNames.includes(name + '市')) {
-      return {
-        ...item,
-        name: name + '市'
-      }
-    }
-
-    // 尝试补州
-    if (mapNames.includes(name + '州')) {
-      return {
-        ...item,
-        name: name + '州'
-      }
-    }
-    // 匹配 “xx自治州”
-    const autoStateMatch = mapNames.find(n =>
-      n.includes(name) && n.includes('自治州')
-    )
-
-    if (autoStateMatch) {
-      return {
-        ...item,
-        name: autoStateMatch
-      }
-    }
-
+    if (mapNames.includes(name)) return item
+    if (mapNames.includes(name + '市')) return { ...item, name: name + '市' }
+    if (mapNames.includes(name + '州')) return { ...item, name: name + '州' }
+    const autoStateMatch = mapNames.find(n => n.includes(name) && n.includes('自治州'))
+    if (autoStateMatch) return { ...item, name: autoStateMatch }
     return item
   })
-  const option = getOption(mapName, fixedData)
 
+  const option = getOption(mapName, fixedData)
   chart.setOption(option, true)
 }
 
@@ -215,15 +176,10 @@ const bindClick = () => {
     if (isDrillDown.value) return
 
     const province = params.name
-    console.log('点击省份:', province)
-    console.log('所有省份key:', Object.keys(mapStore.provinceData))
-    console.log('当前省数据:', mapStore.provinceData[province])
-
     const data = mapStore.getProvinceData(province)
     if (!data.length) return
 
     const code = mapStore.getProvinceCode(province)
-
     isDrillDown.value = true
 
     await renderMap(
@@ -236,7 +192,6 @@ const bindClick = () => {
 // ================= 返回 =================
 const goBack = async () => {
   isDrillDown.value = false
-
   await renderMap(
     'china',
     'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'
@@ -246,14 +201,11 @@ const goBack = async () => {
 // ================= 生命周期 =================
 onMounted(async () => {
   await initChart()
-  // 先请求数据
   await mapStore.fetchMapData()
-  // 再渲染地图
   await renderMap(
     'china',
     'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'
   )
-
 })
 
 onBeforeUnmount(() => {
@@ -269,25 +221,23 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
-
 .map-chart {
   width: 100%;
-  height: 600px;
-  min-height: 300px;
+  height: 100%;
 }
 
-/* 返回按钮（统一红色风格） */
 .back-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  left: 10px;
   z-index: 10;
-  padding: 6px 12px;
+  padding: 4px 10px;
   background: rgba(127, 29, 29, 0.6);
   border: 1px solid rgba(248, 113, 113, 0.4);
   color: #e2e8f0;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .back-btn:hover {

@@ -55,6 +55,7 @@ const getOption = (xData, seriesData) => {
 
     legend: {
       data: seriesData.map(item => item.name),
+      bottom: '-5',
       textStyle: {
         color:'#e2e8f0' // 图例文字颜色
       }
@@ -63,7 +64,7 @@ const getOption = (xData, seriesData) => {
       top: '25%',
       left: '8%',
       right: '5%',
-      bottom: '15%'
+      bottom: '20%'
     },
 
 

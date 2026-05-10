@@ -1,0 +1,147 @@
+[
+  {
+    "technology": "沉井基础",
+    "types": [
+      {
+        "type": "梁式桥",
+        "count": 0
+      },
+      {
+        "type": "拱式桥",
+        "count": 183
+      },
+      {
+        "type": "悬索桥",
+        "count": 0
+      },
+      {
+        "type": "斜拉桥",
+        "count": 0
+      },
+      {
+        "type": "刚架桥",
+        "count": 0
+      },
+      {
+        "type": "浮桥",
+        "count": 0
+      }
+    ]
+  },
+  {
+    "technology": "明挖扩大基础",
+    "types": [
+      {
+        "type": "梁式桥",
+        "count": 97
+      },
+      {
+        "type": "拱式桥",
+        "count": 0
+      },
+      {
+        "type": "悬索桥",
+        "count": 0
+      },
+      {
+        "type": "斜拉桥",
+        "count": 0
+      },
+      {
+        "type": "刚架桥",
+        "count": 0
+      },
+      {
+        "type": "浮桥",
+        "count": 34
+      }
+    ]
+  },
+  {
+    "technology": "预制装配法",
+    "types": [
+      {
+        "type": "梁式桥",
+        "count": 189
+      },
+      {
+        "type": "拱式桥",
+        "count": 113
+      },
+      {
+        "type": "悬索桥",
+        "count": 0
+      },
+      {
+        "type": "斜拉桥",
+        "count": 0
+      },
+      {
+        "type": "刚架桥",
+        "count": 15
+      },
+      {
+        "type": "浮桥",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "technology": "桩基础",
+    "types": [
+      {
+        "type": "梁式桥",
+        "count": 17
+      },
+      {
+        "type": "拱式桥",
+        "count": 11
+      },
+      {
+        "type": "悬索桥",
+        "count": 0
+      },
+      {
+        "type": "斜拉桥",
+        "count": 0
+      },
+      {
+        "type": "刚架桥",
+        "count": 0
+      },
+      {
+        "type": "浮桥",
+        "count": 19
+      }
+    ]
+  },
+  {
+    "technology": "悬臂施工法",
+    "types": [
+      {
+        "type": "梁式桥",
+        "count": 4
+      },
+      {
+        "type": "拱式桥",
+        "count": 0
+      },
+      {
+        "type": "悬索桥",
+        "count": 63
+      },
+      {
+        "type": "斜拉桥",
+        "count": 173
+      },
+      {
+        "type": "刚架桥",
+        "count": 83
+      },
+      {
+        "type": "浮桥",
+        "count": 0
+      }
+    ]
+  }
+]

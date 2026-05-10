@@ -68,13 +68,13 @@ const { go, login,  } = useNavigate()
 .cards {
   display: flex;
   justify-content: center;
-  gap: 40px;
-  padding: 80px 20px;
+  gap: 120px;
+  padding: 40px 20px;
 }
 
 .card {
-  width: 260px;
-  height: 180px;
+  width: 240px;
+  height: 100px;
   background: rgba(15, 23, 42, 0.85);
   color: #e2e8f0;
   padding: 20px;

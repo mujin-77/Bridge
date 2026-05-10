@@ -36,7 +36,7 @@ const bridgeStore = useBridgeStore()
 const getOption = () => ({
   title: {
     text: '桥梁类型发展趋势与占比',
-    top: 0,
+    top: -3,
   },
 
   legend: {
@@ -63,8 +63,11 @@ const getOption = () => ({
   },
 
   grid: {
-    top: '55%'
+    top: '54%',
+    left: '8%',
+    right: '5%',
   },
+
 
   series: [
     ...((bridgeStore.chartDataset || []).slice(1)).map(() => ({
@@ -155,6 +158,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .chart-container {
+  margin-top: 40px;
   width: 100%;
   height: 100%;
 }
@@ -162,6 +166,5 @@ onBeforeUnmount(() => {
 .chart {
   width: 100%;
   height: 100%;
-  margin-top: 25px;
 }
 </style>

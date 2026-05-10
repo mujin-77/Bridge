@@ -44,7 +44,7 @@ const banners = ref([
 
 .image-wrapper {
   width: 100%;
-  height: 100%;
+  height: 90%;
   display: flex;
   align-items: center;
   justify-content: center;

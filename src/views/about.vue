@@ -14,9 +14,7 @@
           <span class="title-icon">🌉</span>
           中国桥梁发展状况
         </h1>
-        <p class="subtitle">
-          BRIDGE DEVELOPMENT OVERVIEW
-        </p>
+        <p class="subtitle">BRIDGE DEVELOPMENT OVERVIEW</p>
         <button
           class="back-btn"
           @click="back"
@@ -30,48 +28,24 @@
     <section class="stats-section">
       <div class="stats-grid">
         <div class="stat-card highlight">
-          <div class="stat-value">
-            626<span class="unit">米</span>
-          </div>
-          <div class="stat-label">
-            世界最高桥记录
-          </div>
-          <div class="stat-desc">
-            花江峡谷大桥桥面距水面高度
-          </div>
+          <div class="stat-value">626<span class="unit">米</span></div>
+          <div class="stat-label">世界最高桥记录</div>
+          <div class="stat-desc">花江峡谷大桥桥面距水面高度</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">
-            100<span class="unit">万+</span>
-          </div>
-          <div class="stat-label">
-            全国公路桥梁总量
-          </div>
-          <div class="stat-desc">
-            世界领先的工程规模
-          </div>
+          <div class="stat-value">100<span class="unit">万+</span></div>
+          <div class="stat-label">全国公路桥梁总量</div>
+          <div class="stat-desc">世界领先的工程规模</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">
-            18.8<span class="unit">万亿</span>
-          </div>
-          <div class="stat-label">
-            十四五交通投资
-          </div>
-          <div class="stat-desc">
-            持续推动行业发展
-          </div>
+          <div class="stat-value">18.8<span class="unit">万亿</span></div>
+          <div class="stat-label">十四五交通投资</div>
+          <div class="stat-desc">持续推动行业发展</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">
-            万亿<span class="unit">级</span>
-          </div>
-          <div class="stat-label">
-            养护市场规模
-          </div>
-          <div class="stat-desc">
-            2025年突破万亿大关
-          </div>
+          <div class="stat-value">万亿<span class="unit">级</span></div>
+          <div class="stat-label">养护市场规模</div>
+          <div class="stat-desc">2025年突破万亿大关</div>
         </div>
       </div>
     </section>
@@ -87,6 +61,7 @@
         <!-- 规模成就 -->
         <div class="dimension-card">
           <div class="card-header">
+            <span class="card-icon">🏆</span>
             <h3>规模成就</h3>
           </div>
           <div class="card-content">
@@ -109,6 +84,7 @@
         <!-- 前沿工程 -->
         <div class="dimension-card">
           <div class="card-header">
+            <span class="card-icon">🚀</span>
             <h3>前沿工程</h3>
           </div>
           <div class="card-content">
@@ -135,6 +111,7 @@
         <!-- 核心技术 -->
         <div class="dimension-card">
           <div class="card-header">
+            <span class="card-icon">⚙️</span>
             <h3>核心技术</h3>
           </div>
           <div class="card-content">
@@ -161,6 +138,7 @@
         <!-- 发展模式 -->
         <div class="dimension-card">
           <div class="card-header">
+            <span class="card-icon">📊</span>
             <h3>发展模式</h3>
           </div>
           <div class="card-content">
@@ -190,7 +168,7 @@
     <section class="support-section">
       <h2 class="section-title">
         <span class="title-decoration">▎</span>
-        背后的核心支撑
+        💡 背后的核心支撑
       </h2>
       <p class="section-intro">
         中国桥梁的非凡实力，关键在于构建起了一套完整的技术与工程体系：
@@ -198,30 +176,22 @@
       
       <div class="support-grid">
         <div class="support-card">
-          <div class="support-icon">
-            🔧
-          </div>
+          <div class="support-icon">🔧</div>
           <h4>强大的技术装备体系</h4>
           <p>目前已形成满足"穿山、越江、跨海"需求的成套技术和装备，并大量应用自主研发的"黑科技"</p>
         </div>
         <div class="support-card">
-          <div class="support-icon">
-            💡
-          </div>
+          <div class="support-icon">💡</div>
           <h4>自主创新驱动</h4>
           <p>核心专利技术大量涌现，国产盾构机全球市场占有率已达70%，展现出强大的自主创新能力</p>
         </div>
         <div class="support-card">
-          <div class="support-icon">
-            🤖
-          </div>
+          <div class="support-icon">🤖</div>
           <h4>智能制造与数字化</h4>
           <p>"智慧造桥机"、BIM数字孪生等技术在高铁桥梁等重点项目中广泛应用。双柳长江大桥通过在缆索内部植入光纤传感网络，成为了"会思考"的桥梁</p>
         </div>
         <div class="support-card">
-          <div class="support-icon">
-            ⚡
-          </div>
+          <div class="support-icon">⚡</div>
           <h4>高效资源整合能力</h4>
           <p>依托完整的工业产业链，超90%的基建物资可实现自主供应，保障了项目高效推进。同时，AI技术赋能建造全过程，综合效率提升可达20%至50%</p>
         </div>
@@ -232,7 +202,7 @@
     <section class="future-section">
       <h2 class="section-title light">
         <span class="title-decoration">▎</span>
-        展望未来：中国桥梁的下一程
+        🔭 展望未来：中国桥梁的下一程
       </h2>
       <p class="section-intro light">
         中国桥梁的未来发展，将围绕"新建"与"养护"两大主线展开：
@@ -241,12 +211,14 @@
       <div class="future-grid">
         <div class="future-card">
           <div class="future-header">
+            <span class="future-icon">🎯</span>
             <h4>持续突破</h4>
           </div>
           <p>一批新的桥梁超级工程仍在谋划和建设，如计划在"十五五"期间建成的张靖皋长江大桥等，将持续引领世界桥梁工程技术发展</p>
         </div>
         <div class="future-card">
           <div class="future-header">
+            <span class="future-icon">🏠</span>
             <h4>拥抱存量时代</h4>
           </div>
           <p>超半数大型桥梁已进入寿命中后期，催生出万亿级的养护修缮市场，此领域将迎来黄金发展期</p>
