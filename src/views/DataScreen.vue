@@ -26,7 +26,7 @@
           <Distribution />
         </div>
         <button @click="go('/comparative_anlysis')">
-          数据对比分析
+          数据分析与介绍
         </button>
       </div>
 

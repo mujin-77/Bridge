@@ -102,7 +102,7 @@ const getOption = (mapName, data) => {
 
       // 全国和市级分开
       max: isChina
-        ? Math.max(maxValue, 100)
+        ? Math.max(maxValue, 200)
         : Math.max(maxValue, 50),
 
       left: 'left',

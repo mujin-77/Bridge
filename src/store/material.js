@@ -8,14 +8,15 @@ export const useMaterialStore = defineStore('material', {
 
   getters: {
     getMaterialData(state) {
+      // 数据库中的材料映射
       const materials = [
-        '钢筋混凝土',
-        '预应力混凝土',
-        '钢材',
-        '石材',
-        '混凝土',
         '木材',
-        '其他'
+        '混凝土',
+        '石材',
+        '钢材',
+        '预应力混凝土',
+        '钢管混凝土',
+        '钢/混凝土'
       ]
 
       const bridgeTypes = [
@@ -53,7 +54,7 @@ export const useMaterialStore = defineStore('material', {
               }
 
               if (type === '刚架桥') {
-                typeMatch = item.type.includes('钢')
+                typeMatch = item.type.includes('钢') && !item.type.includes('斜拉')
               }
 
               if (type === '浮桥') {

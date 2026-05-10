@@ -18,3 +18,8 @@ export const getBridgesByProvince = (province) => {
 export const getMaterialStatistics = () => {
   return request.get('/bridges/by-material')
 }
+
+// 按施工工艺统计
+export const getTechnologyStatistics = () => {
+  return request.get('/bridges/by-technology')
+}

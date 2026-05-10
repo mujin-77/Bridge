@@ -19,6 +19,18 @@ export const useBridgeStore = defineStore('bridge', {
         '现代'
       ]
 
+      // 数据库朝代名映射到前端朝代
+      const dynastyMap = {
+        '汉朝': ['汉朝', '西晋', '东汉', '西汉', '春秋', '东周', '西周', '秦朝', '商朝'],
+        '隋朝': ['隋朝'],
+        '唐朝': ['唐朝', '唐代'],
+        '宋朝': ['宋朝', '宋代', '北宋', '南宋', '五代十国', '金朝'],
+        '元朝': ['元朝', '元代'],
+        '明朝': ['明朝', '明代'],
+        '清朝': ['清朝', '清代'],
+        '现代': ['现代', '近代']
+      }
+
       const bridgeTypes = [
         '梁式桥',
         '拱式桥',
@@ -35,41 +47,39 @@ export const useBridgeStore = defineStore('bridge', {
         const row = [type]
 
         dynasties.forEach(dynasty => {
+          const matchedDynasties = dynastyMap[dynasty] || [dynasty]
+          
           const total = state.rawData
             .filter(item => {
-              const dynastyMatch = item.dynasty === dynasty
+              // 朝代匹配（支持多种写法）
+              const dynastyMatch = matchedDynasties.includes(item.dynasty)
 
               let typeMatch = false
 
               if (type === '梁式桥') {
-                typeMatch =
-              item.type.includes('梁')
+                typeMatch = item.type.includes('梁')
               }
 
               if (type === '拱式桥') {
-                typeMatch =
-              item.type.includes('拱')
+                typeMatch = item.type.includes('拱')
               }
 
               if (type === '悬索桥') {
-                typeMatch =
-              item.type.includes('悬索')
+                typeMatch = item.type.includes('悬索')
               }
 
               if (type === '斜拉桥') {
-                typeMatch =
-              item.type.includes('斜拉')
+                typeMatch = item.type.includes('斜拉')
               }
 
               if (type === '刚架桥') {
-                typeMatch =
-              item.type.includes('钢')
+                typeMatch = item.type.includes('钢') && !item.type.includes('斜拉')
               }
 
               if (type === '浮桥') {
-                typeMatch =
-              item.type.includes('浮')
+                typeMatch = item.type.includes('浮')
               }
+              
               if (type === '其他') {
                 typeMatch =
                   !item.type.includes('梁') &&

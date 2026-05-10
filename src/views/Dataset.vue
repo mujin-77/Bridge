@@ -129,6 +129,7 @@
               <tr>
                 <th>桥梁名称</th>
                 <th>桥梁类型</th>
+                <th>施工工艺</th>
                 <th>建成年份</th>
                 <th>所在地点</th>
                 <th>操作</th>
@@ -142,6 +143,7 @@
               >
                 <td>{{ item.name }}</td>
                 <td>{{ item.type }}</td>
+                <td>{{ item.technology }}</td>
                 <td>{{ item.year }}</td>
                 <td>{{ item.location }}</td>
                 <td>
@@ -184,6 +186,15 @@
             </el-form-item>
             <el-form-item label="桥梁类型">
               <el-input v-model="editForm.type" />
+            </el-form-item>
+            <el-form-item label="施工工艺">
+              <el-select v-model="editForm.technology" style="width: 100%">
+                <el-option label="明挖扩大基础" value="明挖扩大基础" />
+                <el-option label="桩基础" value="桩基础" />
+                <el-option label="沉井基础" value="沉井基础" />
+                <el-option label="悬臂施工法" value="悬臂施工法" />
+                <el-option label="预制装配法" value="预制装配法" />
+              </el-select>
             </el-form-item>
             <el-form-item label="建成年份">
               <el-input v-model="editForm.year" />
@@ -271,7 +282,7 @@ const drawerSize = computed(() => {
 
 // 编辑抽屉相关状态
 const editDrawerVisible = ref(false)
-const editForm = ref({ name: '', type: '', year: '', location: '' })
+const editForm = ref({ name: '', type: '', technology: '', year: '', location: '' })
 const editIndex = ref(null)  // 保存原始数组中的真实索引
 
 // 点击编辑按钮

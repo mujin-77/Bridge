@@ -1,14 +1,15 @@
 import { defineStore } from 'pinia'
+import { getBridges } from '@/utils/api/bridge'
 
 export const useTechStore = defineStore('tech', {
   state: () => ({
     // 👉 原始数据（核心）
     rawData: [
-      [120, 100, 80, 60, 90, 140],   // 明挖扩大基础
-      [200, 180, 150, 120, 160, 100], // 桩基础
-      [80, 60, 50, 40, 70, 30],       // 沉井基础
-      [150, 200, 220, 180, 170, 90],  // 悬臂施工法
-      [180, 160, 140, 120, 150, 200]  // 预制装配法
+      [0, 0, 0, 0, 0, 0],   // 明挖扩大基础
+      [0, 0, 0, 0, 0, 0],   // 桩基础
+      [0, 0, 0, 0, 0, 0],   // 沉井基础
+      [0, 0, 0, 0, 0, 0],   // 悬臂施工法
+      [0, 0, 0, 0, 0, 0]    // 预制装配法
     ],
 
     // 👉 横坐标
@@ -30,5 +31,85 @@ export const useTechStore = defineStore('tech', {
       xData: state.xData,
       techNames: state.techNames
     })
+  },
+
+  actions: {
+    async fetchTechStatistics() {
+      try {
+        // 获取所有桥梁数据
+        const res = await getBridges({ page: 1, pageSize: 2000 })
+        const bridges = res.data.list || []
+        
+        const bridgeTypes = ['梁式桥', '拱式桥', '悬索桥', '斜拉桥', '刚架桥', '浮桥']
+        
+        // 初始化 rawData
+        this.rawData = this.techNames.map(() => new Array(bridgeTypes.length).fill(0))
+        
+        // 分类统计
+        const typeCountMap = {}
+        bridgeTypes.forEach(t => typeCountMap[t] = 0)
+        
+        bridges.forEach(bridge => {
+          const type = bridge.type || ''
+          let category = '浮桥' // 默认分类
+          
+          // 判断桥型分类（按优先级）
+          // 1. 先判断钢架桥（包括钢桁架、钢桁梁等钢结构的刚架类型）
+          if (type.includes('桁') || type.includes('钢架')) {
+            category = '刚架桥'
+          } else if (type.includes('钢') && !type.includes('斜拉') && !type.includes('悬索')) {
+            category = '刚架桥'  // 其他钢桥（不含斜拉/悬索）
+          } else if (type.includes('梁')) {
+            category = '梁式桥'
+          } else if (type.includes('拱')) {
+            category = '拱式桥'
+          } else if (type.includes('悬索')) {
+            category = '悬索桥'
+          } else if (type.includes('斜拉')) {
+            category = '斜拉桥'
+          } else if (type.includes('浮')) {
+            category = '浮桥'
+          }
+          
+          typeCountMap[category]++
+        })
+        
+        // 根据每个桥梁的实际工艺分配数据
+        bridges.forEach(bridge => {
+          const type = bridge.type || ''
+          const tech = bridge.technology || ''
+          let category = '浮桥' // 默认分类
+          
+          // 判断桥型分类（按优先级）
+          if (type.includes('桁') || type.includes('钢架')) {
+            category = '刚架桥'
+          } else if (type.includes('钢') && !type.includes('斜拉') && !type.includes('悬索')) {
+            category = '刚架桥'
+          } else if (type.includes('梁')) {
+            category = '梁式桥'
+          } else if (type.includes('拱')) {
+            category = '拱式桥'
+          } else if (type.includes('悬索')) {
+            category = '悬索桥'
+          } else if (type.includes('斜拉')) {
+            category = '斜拉桥'
+          } else if (type.includes('浮')) {
+            category = '浮桥'
+          }
+          
+          // 找到对应的工艺索引
+          const tIdx = this.techNames.indexOf(tech)
+          // 找到对应的桥型索引
+          const bIdx = bridgeTypes.indexOf(category)
+          
+          if (tIdx !== -1 && bIdx !== -1) {
+            this.rawData[tIdx][bIdx]++
+          }
+        })
+        
+      } catch (err) {
+        console.error('获取施工工艺数据失败:', err)
+      }
+    }
   }
 })

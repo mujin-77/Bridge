@@ -139,8 +139,9 @@ const renderChart = () => {
 }
 
 // ================= 生命周期 =================
-onMounted(() => {
+onMounted(async () => {
   initChart()
+  await techStore.fetchTechStatistics()
   renderChart()
 })
 
