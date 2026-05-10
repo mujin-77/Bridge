@@ -4,14 +4,14 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-  "presets": [["es2015", { "modules": false }]],
+  'presets': [['es2015', { 'modules': false }]],
   plugins: [
     vue(),
-    "component",
-      {
-        "libraryName": "element-ui",
-        "styleLibraryName": "theme-chalk"
-      }
+    'component',
+    {
+      'libraryName': 'element-ui',
+      'styleLibraryName': 'theme-chalk'
+    }
   ],
 
   // ✅ 配置 @ 指向 src
@@ -25,7 +25,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       less: {
-        additionalData: `@import "@/css/index.less";`
+        additionalData: '@import "@/css/index.less";'
       }
     }
   },
@@ -33,7 +33,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      },
+      '/bridges': {
+        target: 'http://localhost:3000',
         changeOrigin: true
       }
     }

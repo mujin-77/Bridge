@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 
 const routes = [
@@ -7,7 +7,7 @@ const routes = [
   { path: '/DataScreen', component: () => import('../views/DataScreen.vue') },
   { path: '/Dataset', component: () => import('../views/Dataset.vue') },
   { path: '/login', component: () => import('../views/Dataset/LoginPage.vue') },
-  
+
   { path: '/comparative_anlysis', component: () => import('../views/DataScreen/comparative_anlysis.vue') },
   { path: '/about', component: () => import('../views/about.vue') },
   { path: '/BridgeTypes', component: () => import('../views/DataScreen/BridgeTypes.vue') },
@@ -15,7 +15,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
 
