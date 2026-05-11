@@ -4,24 +4,19 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-  'presets': [['es2015', { 'modules': false }]],
+  // 只保留 Vite 支持的配置
   plugins: [
-    vue(),
-    'component',
-    {
-      'libraryName': 'element-ui',
-      'styleLibraryName': 'theme-chalk'
-    }
+    vue()
   ],
 
-  // ✅ 配置 @ 指向 src
+  // 配置 @ 指向 src
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
 
-  // ✅ Less 全局变量自动引入
+  // Less 全局变量自动引入
   css: {
     preprocessorOptions: {
       less: {
@@ -29,7 +24,8 @@ export default defineConfig({
       }
     }
   },
-  //后端跨域
+
+  // 本地开发跨域（部署后不影响）
   server: {
     proxy: {
       '/api': {
