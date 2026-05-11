@@ -276,10 +276,12 @@ const changeView = (key) => {
 
 .header {
   margin-bottom: 20px;
+  color: #001529;
 }
 
 /* 卡片 */
 .card-row {
+  color: #001529;
   display: flex;
   gap: 20px;
   margin-bottom: 20px;

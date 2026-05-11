@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { getBridgesByProvince } from '@/utils/api/bridge'
+import { getBridgesByProvince } from '../utils/api/bridge'
+import bridgesData from '../mock/bridges.json'
 
 
 export const useMapStore = defineStore('map', {
@@ -170,8 +171,57 @@ export const useMapStore = defineStore('map', {
         this.provinceData = provinceMap
 
       } catch (err) {
-        console.error(err)
+        console.warn('获取地图数据失败，使用本地数据:', err.message)
+        // 接口失败时，使用本地 mock 数据
+        this.loadLocalMapData()
       }
+    },
+    
+    // 从本地数据加载地图数据
+    loadLocalMapData() {
+      const provinces = Object.keys(this.provinceCodeMap)
+      const chinaList = []
+      const provinceMap = {}
+      
+      // 按省份分组
+      const bridgeByProvince = {}
+      bridgesData.forEach(bridge => {
+        const province = bridge.province
+        if (!bridgeByProvince[province]) {
+          bridgeByProvince[province] = []
+        }
+        bridgeByProvince[province].push(bridge)
+      })
+      
+      provinces.forEach(provinceName => {
+        const dbProvince = this.normalizeProvinceName(provinceName)
+        const list = bridgeByProvince[dbProvince] || []
+        
+        chinaList.push({
+          name: provinceName,
+          value: list.length
+        })
+        
+        const cityMap = {}
+        list.forEach(item => {
+          const city = this.extractAreaName(item.location)
+          if (!cityMap[city]) {
+            cityMap[city] = 0
+          }
+          cityMap[city]++
+        })
+        
+        provinceMap[provinceName] = Object.entries(cityMap).map(
+          ([name, value]) => ({ name, value })
+        )
+        
+        if (!provinceMap[provinceName].length) {
+          provinceMap[provinceName] = [{}]
+        }
+      })
+      
+      this.chinaData = chinaList
+      this.provinceData = provinceMap
     }
   }
 

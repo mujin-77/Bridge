@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getBridges } from '@/utils/api/bridge'
+import { getBridges } from '../utils/api/bridge'
 
 export const useBridgeStore = defineStore('bridge', {
   state: () => ({

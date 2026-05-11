@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
-import bridgesData from '@/mock/bridges.json'
-import { getBridgesByDynasty } from '@/utils/api/bridge'
+import bridgesData from '../mock/bridges.json'
+import { getBridgesByDynasty } from '../utils/api/bridge'
 
 export const useBridgeStore = defineStore('bridge', {
   state: () => ({
-    rawData: bridgesData, // 直接使用 mock 数据
+    rawData: [...bridgesData], // 使用 mock 数据副本（避免引用问题）
     currentType: '全部', // 当前筛选类型
     bridgeTypes: ['梁式桥', '拱式桥', '悬索桥', '斜拉桥', '刚架桥', '浮桥']
   }),
@@ -150,9 +150,13 @@ export const useBridgeStore = defineStore('bridge', {
     async fetchStatistics() {
       try {
         const res = await getBridgesByDynasty()
-        this.rawData = res.data
+        if (res.data && res.data.length > 0) {
+          this.rawData = res.data
+        }
+        // 接口失败或无数据时，保持使用本地 mock 数据
       } catch (err) {
-        console.error('统计接口失败', err)
+        console.warn('统计接口请求失败，使用本地 mock 数据:', err.message)
+        // 不做任何操作，保留本地 mock 数据
       }
     },
 
