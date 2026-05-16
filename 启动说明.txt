@@ -1,0 +1,91 @@
+# 桥梁信息系统 - 启动说明
+
+## 系统架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Electron 桌面应用                        │
+│  ┌───────────────────┐      ┌───────────────────────────┐  │
+│  │   Vue3 前端界面   │      │    Express 后端服务        │  │
+│  │   (Vite 开发服务器) │      │    (http://127.0.0.1:3000) │  │
+│  │   (:5173)         │ ──── │    + SQLite 数据库         │  │
+│  └───────────────────┘      └───────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 快速启动
+
+### 方式一：一键启动（推荐）
+双击运行 `启动全部.bat`
+
+### 方式二：手动启动
+
+1. **启动后端服务**
+   ```bash
+   cd server
+   npm install          # 首次运行需要安装依赖
+   node init-db.js      # 首次运行需要初始化数据库
+   npm start            # 启动后端服务
+   ```
+
+2. **启动前端服务**
+   ```bash
+   npm run dev          # 启动 Vite 开发服务器
+   ```
+
+3. **启动桌面应用**
+   ```bash
+   npm run electron:dev # 启动 Electron 桌面应用
+   ```
+
+## 目录结构
+
+```
+my-project/
+├── server/                 # 后端服务目录
+│   ├── index.js           # Express 主入口
+│   ├── init-db.js        # 数据库初始化脚本
+│   ├── package.json      # 后端依赖配置
+│   └── bridges.db        # SQLite 数据库文件（自动生成）
+├── src/                    # 前端源码目录
+│   ├── api/              # API 接口
+│   ├── store/            # 状态管理
+│   ├── views/            # 页面组件
+│   └── utils/            # 工具函数
+├── dist/                  # 前端构建输出目录
+└── release/               # 打包输出目录
+```
+
+## API 接口说明
+
+| 方法   | 接口                         | 说明               |
+|--------|------------------------------|--------------------|
+| GET    | /api/bridges                 | 获取桥梁列表       |
+| GET    | /api/bridges/:id            | 获取桥梁详情       |
+| GET    | /api/bridges/by-dynasty     | 按朝代统计         |
+| GET    | /api/bridges/by-province    | 按省份统计         |
+| GET    | /api/bridges/by-material    | 按材料统计         |
+| GET    | /api/bridges/by-technology  | 按工艺统计         |
+| POST   | /api/bridges                | 添加桥梁           |
+| PUT    | /api/bridges/:id           | 更新桥梁           |
+| DELETE | /api/bridges/:id           | 删除桥梁           |
+| GET    | /api/statistics/overview    | 统计概览           |
+| GET    | /api/health                 | 健康检查           |
+
+## 数据管理
+
+### 重新初始化数据库
+```bash
+cd server
+node init-db.js
+```
+
+### 导出数据
+数据库文件位于 `server/bridges.db`，可使用 SQLite 工具直接查看。
+
+## 技术栈
+
+- **前端**: Vue 3 + Element Plus + ECharts + Pinia
+- **后端**: Express + SQLite (better-sqlite3)
+- **桌面**: Electron
+- **构建**: Vite + electron-builder

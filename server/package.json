@@ -1,0 +1,16 @@
+{
+  "name": "bridge-info-server",
+  "version": "1.0.0",
+  "description": "桥梁信息系统后端服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "init-db": "node init-db.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "better-sqlite3": "^11.5.0"
+  }
+}
