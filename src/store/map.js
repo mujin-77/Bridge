@@ -145,7 +145,7 @@ export const useMapStore = defineStore('map', {
           const cityMap = {}
 
           list.forEach(item => {
-            const city = this.extractAreaName(item.location)
+            const city = item.city || this.extractAreaName(item.location)
 
             if (!cityMap[city]) {
               cityMap[city] = 0
@@ -204,7 +204,7 @@ export const useMapStore = defineStore('map', {
         
         const cityMap = {}
         list.forEach(item => {
-          const city = this.extractAreaName(item.location)
+          const city = item.city || this.extractAreaName(item.location)
           if (!cityMap[city]) {
             cityMap[city] = 0
           }

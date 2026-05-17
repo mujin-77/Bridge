@@ -236,7 +236,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount,nextTick } from 'vue'
 import { useNavigate } from '@/hooks/useNavigate.js'
-const { go,   } = useNavigate()
+const { go } = useNavigate()
 
 import Bridge from '@/components/Charts/Bridge.vue'
 import Structure from '@/components/Charts/Structure.vue'

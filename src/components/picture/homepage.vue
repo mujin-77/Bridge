@@ -24,14 +24,20 @@
 
 <script setup>
 import { ref } from 'vue'
+import img1 from '@/assets/bridge/1 (21).png'
+import img2 from '@/assets/bridge/2 (1).png'
+import img3 from '@/assets/bridge/2 (3).png'
+import img4 from '@/assets/bridge/1 (14).png'
+import img5 from '@/assets/bridge/2 (2).png'
 
 const banners = ref([
-  { img: new URL('@/assets/bridge/1 (21).png', import.meta.url).href, title: '北盘江第一桥' },
-  { img: new URL('@/assets/bridge/2 (1).png', import.meta.url).href, title: '鸭池河大桥' },
-  { img: new URL('@/assets/bridge/2 (3).png', import.meta.url).href, title: '平塘特大桥' },
-  { img: new URL('@/assets/bridge/1 (14).png', import.meta.url).href, title: '鸭池河大桥' },
-  { img: new URL('@/assets/bridge/2 (2).png', import.meta.url).href, title: '坝陵河大桥' },
+  { img: img1, title: '北盘江第一桥' },
+  { img: img2, title: '鸭池河大桥' },
+  { img: img3, title: '平塘特大桥' },
+  { img: img4, title: '鸭池河大桥' },
+  { img: img5, title: '坝陵河大桥' },
 ])
+
 </script>
 
 <style lang="less" scoped>

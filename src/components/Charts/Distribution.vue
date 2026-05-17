@@ -20,6 +20,7 @@ import { ref, onMounted, onBeforeUnmount, nextTick} from 'vue'
 import * as echarts from 'echarts'
 import { useMapStore } from '@/store/map'
 
+
 const chartRef = ref(null)
 let chart = null
 
@@ -97,7 +98,7 @@ const getOption = (mapName, data) => {
 
     visualMap: {
       min: 0,
-      max: isChina ? Math.max(maxValue, 200) : Math.max(maxValue, 50),
+      max: isChina ? Math.max(maxValue, 400) : Math.max(maxValue, 100),
       left: 'left',
       bottom: 5,
       calculable: true,
@@ -163,6 +164,15 @@ const renderMap = async (mapName, url) => {
     if (mapNames.includes(name + '州')) return { ...item, name: name + '州' }
     const autoStateMatch = mapNames.find(n => n.includes(name) && n.includes('自治州'))
     if (autoStateMatch) return { ...item, name: autoStateMatch }
+
+    const countyMatch = mapNames.find(n => n.includes(name.replace('县', '').replace('区', '').replace('镇', '')))
+    if (countyMatch) return { ...item, name: countyMatch }
+
+    // 如果都没匹配上，尝试在 mapNames 中查找包含该名称的
+    const partialMatch = mapNames.find(n => n.includes(name.replace(/[市县区镇乡]/g, '')))
+    if (partialMatch) return { ...item, name: partialMatch }
+
+    console.warn('未匹配:', name)
     return item
   })
 
@@ -177,6 +187,7 @@ const bindClick = () => {
 
     const province = params.name
     const data = mapStore.getProvinceData(province)
+    
     if (!data.length) return
 
     const code = mapStore.getProvinceCode(province)

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useBridgeStore = defineStore('bridge', {
+export const useBridgeStore = defineStore('bridgeAnalysis', {
   state: () => ({
     bridgeData: {
       梁式桥: {

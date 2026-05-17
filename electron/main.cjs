@@ -5,9 +5,7 @@ const fs = require('fs');
 const url = require('url');
 
 // 获取静态文件目录
-const DIST_PATH = app.isPackaged 
-  ? path.join(process.resourcesPath, 'dist')
-  : path.join(__dirname, '..', 'dist');
+const DIST_PATH = path.join(__dirname, '..', 'dist');
 
 // 简单静态服务器
 function createServer(port) {
@@ -29,7 +27,8 @@ function createServer(port) {
   return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
       const parsedUrl = url.parse(req.url, true);
-      let filePath = path.join(DIST_PATH, parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname);
+      const decodedPathname = decodeURIComponent(parsedUrl.pathname);
+      let filePath = path.join(DIST_PATH, decodedPathname === '/' ? 'index.html' : decodedPathname);
 
       // 安全检查
       if (!path.normalize(filePath).startsWith(DIST_PATH)) {
@@ -76,6 +75,8 @@ async function createWindow() {
     title: '桥梁信息系统',
     icon: path.join(__dirname, '..', 'dist', 'favicon.svg')
   });
+
+  mainWindow.webContents.openDevTools();  // 打开调试窗口
 
   // 加载页面
   mainWindow.loadURL(`http://localhost:${PORT}`);
