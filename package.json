@@ -20,7 +20,11 @@
     },
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "server/**/*"
+    ],
+    "asarUnpack": [
+      "server/**/*"
     ],
     "portable": {
       "artifactName": "桥梁信息系统.exe"

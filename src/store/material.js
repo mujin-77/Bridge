@@ -96,6 +96,7 @@ export const useMaterialStore = defineStore('material', {
     async fetchMaterialStatistics() {
       try {
         const res = await getMaterialStatistics()
+        if (!Array.isArray(res.data)) throw new Error('返回数据格式不正确')
         this.rawData = res.data
       } catch (err) {
         console.warn('获取材料统计数据失败，使用本地数据计算:', err.message)

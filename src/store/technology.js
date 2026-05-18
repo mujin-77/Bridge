@@ -39,7 +39,8 @@ export const useTechStore = defineStore('tech', {
       try {
         // 获取所有桥梁数据
         const res = await getBridges({ page: 1, pageSize: 1000 })
-        const bridges = res.data.list || []
+        const bridges = (res.data && Array.isArray(res.data.list)) ? res.data.list : []
+        if (bridges.length === 0) throw new Error('返回数据为空或格式不正确')
         
         const bridgeTypes = ['梁式桥', '拱式桥', '悬索桥', '斜拉桥', '刚架桥', '浮桥']
         

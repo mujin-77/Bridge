@@ -262,7 +262,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { ElMessageBox } from 'element-plus'
 import { useBridgeStore } from '@/store/bridge'
 import { useNavigate } from '@/hooks/useNavigate.js'
 import Form from '@/components/form/form.vue'
@@ -273,6 +274,11 @@ const { go, logout } = useNavigate()
 // Store
 const bridgeStore = useBridgeStore()
 bridgeStore.setType('全部')
+
+// 页面加载时从后端拉取数据（持久化数据）
+onMounted(() => {
+  bridgeStore.fetchList()
+})
 
 // 菜单控制
 const open = ref({ bridge: true })
@@ -299,9 +305,9 @@ const filteredData = computed(() => {
   if (keyword.value) {
     const kw = keyword.value.toLowerCase()
     data = data.filter(item =>
-      item.name.toLowerCase().includes(kw) ||
-      item.location.toLowerCase().includes(kw) ||
-      item.type.toLowerCase().includes(kw)
+      (item.name || '').toLowerCase().includes(kw) ||
+      (item.location || '').toLowerCase().includes(kw) ||
+      (item.type || '').toLowerCase().includes(kw)
     )
   }
   return data
@@ -372,9 +378,9 @@ const editRow = (indexInPage) => {
 }
 
 // 保存编辑
-const saveEdit = () => {
+const saveEdit = async () => {
   if (editForm.value.id !== null) {
-    bridgeStore.updateBridge(editForm.value.id, editForm.value)
+    await bridgeStore.updateBridge(editForm.value.id, editForm.value)
     editDrawerVisible.value = false
   }
 }
@@ -384,11 +390,26 @@ const cancelEdit = () => {
   editDrawerVisible.value = false
 }
 
-// 删除行
-const deleteRow = (indexInPage) => {
+// 删除行（带确认弹窗）
+const deleteRow = async (indexInPage) => {
   const row = paginatedData.value[indexInPage]
-  if (row) {
-    bridgeStore.deleteBridge(row.id)
+  if (!row) return
+
+  try {
+    await ElMessageBox.confirm(
+      `确认删除「${row.name}」吗？`,
+      '删除确认',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        roundButton: true,
+        customClass: 'delete-confirm-dialog'
+      }
+    )
+    await bridgeStore.deleteBridge(row.id)
+  } catch {
+    // 用户点击取消，不执行任何操作
   }
 }
 
@@ -861,6 +882,32 @@ const exportAll = () => {
 
     .el-input__inner {
       color: #f8fafc;
+    }
+  }
+}
+
+// 删除确认弹窗样式
+:deep(.delete-confirm-dialog) {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  .el-message-box__title {
+    color: #f87171;
+  }
+
+  .el-message-box__message {
+    color: #e2e8f0;
+  }
+
+  .el-message-box__btns {
+    .el-button--primary {
+      background: #ef4444;
+      border-color: #ef4444;
+
+      &:hover {
+        background: #dc2626;
+        border-color: #dc2626;
+      }
     }
   }
 }

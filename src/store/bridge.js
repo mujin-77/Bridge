@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import bridgesData from '../mock/bridges.json'
-//import { ref, computed } from 'vue'
-//import { getBridges, deleteBridge, batchDeleteBridges } from '../utils/api/bridge.js'
+import { ElMessage } from 'element-plus'
+import { getBridges, addBridge as apiAddBridge, updateBridge as apiUpdateBridge, deleteBridge as apiDeleteBridge } from '../utils/api/bridge.js'
 
 export const useBridgeStore = defineStore('bridge', {
   state: () => ({
-    rawData: [...bridgesData], // 使用 mock 数据副本（避免引用问题）
+    rawData: [], // 初始为空，由 fetchList 从后端加载
     currentType: '全部', // 当前筛选类型
     bridgeTypes: ['梁式桥', '拱式桥', '悬索桥', '斜拉桥', '刚架桥', '浮桥']
   }),
@@ -141,10 +141,25 @@ export const useBridgeStore = defineStore('bridge', {
       this.currentType = type
     },
 
-    // 获取列表数据（直接使用本地数据）
+    // 从后端加载全部桥梁数据（刷新页面后保持持久化）
     async fetchList(params = {}) {
-      // 数据已经在 state 中通过 bridgesData 加载
-      // 如果需要分页，可以在这里处理
+      try {
+        const res = await getBridges({ pageSize: 99999, ...params })
+        if (res.data && res.data.code === 200 && res.data.data && res.data.data.list) {
+          this.rawData = res.data.data.list
+          return
+        }
+        if (res.data && Array.isArray(res.data)) {
+          this.rawData = res.data
+          return
+        }
+      } catch (err) {
+        console.warn('后端接口请求失败，使用 mock 数据:', err.message)
+      }
+      // 后端不可用时降级到本地 mock 数据
+      if (this.rawData.length === 0) {
+        this.rawData = [...bridgesData]
+      }
     },
 
     // 获取统计数据
@@ -162,24 +177,57 @@ export const useBridgeStore = defineStore('bridge', {
     },
 
     // 更新桥梁信息
-    updateBridge(id, data) {
-      const index = this.rawData.findIndex(item => item.id === id)
-      if (index !== -1) {
-        this.rawData[index] = { ...this.rawData[index], ...data }
+    async updateBridge(id, data) {
+      try {
+        await apiUpdateBridge(id, data)
+        // 后端成功，同步更新本地
+        const index = this.rawData.findIndex(item => item.id === id)
+        if (index !== -1) {
+          this.rawData[index] = { ...this.rawData[index], ...data }
+        }
+        ElMessage.success('更新成功')
+      } catch (err) {
+        console.warn('后端未连接，数据仅保存在本次会话中:', err.message)
+        ElMessage.warning('后端未连接，数据仅保存在本次会话中')
+        // 降级到本地操作
+        const index = this.rawData.findIndex(item => item.id === id)
+        if (index !== -1) {
+          this.rawData[index] = { ...this.rawData[index], ...data }
+        }
       }
     },
 
     // 删除桥梁
-    deleteBridge(id) {
-      this.rawData = this.rawData.filter(item => item.id !== id)
+    async deleteBridge(id) {
+      try {
+        await apiDeleteBridge(id)
+        this.rawData = this.rawData.filter(item => item.id !== id)
+        ElMessage.success('删除成功')
+      } catch (err) {
+        console.warn('后端未连接，数据仅保存在本次会话中:', err.message)
+        ElMessage.warning('后端未连接，数据仅保存在本次会话中')
+        // 降级到本地操作
+        this.rawData = this.rawData.filter(item => item.id !== id)
+      }
     },
 
     // 添加桥梁
-    addBridge(data) {
-      this.rawData.push({
-        id: Date.now(),
-        ...data
-      })
+    async addBridge(data) {
+      try {
+        const res = await apiAddBridge(data)
+        if (res.data) {
+          this.rawData.push(res.data)
+        }
+        ElMessage.success('添加成功')
+      } catch (err) {
+        console.warn('后端未连接，数据仅保存在本次会话中:', err.message)
+        ElMessage.warning('后端未连接，数据仅保存在本次会话中')
+        // 降级到本地操作
+        this.rawData.push({
+          id: Date.now(),
+          ...data
+        })
+      }
     }
   }
 })

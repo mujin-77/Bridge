@@ -437,6 +437,18 @@ app.get('/api/health', (req, res) => {
 
 // ==================== 启动服务器 ====================
 
+// 生产环境（Electron 打包后）提供前端静态文件服务
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '..', 'dist');
+  app.use(express.static(distPath));
+  console.log('静态文件目录:', distPath);
+
+  // SPA 路由回退：所有非 API 请求返回 index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 // 初始化数据库
 initDatabase();
 

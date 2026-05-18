@@ -23,3 +23,18 @@ export const getMaterialStatistics = () => {
 export const getTechnologyStatistics = () => {
   return request.get('/api/bridges/by-technology')
 }
+
+// 添加桥梁
+export const addBridge = (data) => {
+  return request.post('/api/bridges', data)
+}
+
+// 更新桥梁
+export const updateBridge = (id, data) => {
+  return request.put(`/api/bridges/${id}`, data)
+}
+
+// 删除桥梁
+export const deleteBridge = (id) => {
+  return request.delete(`/api/bridges/${id}`)
+}

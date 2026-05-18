@@ -1,67 +1,61 @@
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
+const { fork } = require('child_process');
 const http = require('http');
-const fs = require('fs');
-const url = require('url');
 
-// 获取静态文件目录
-const DIST_PATH = path.join(__dirname, '..', 'dist');
+let mainWindow;
+let serverProcess;
 
-// 简单静态服务器
-function createServer(port) {
-  const MIME_TYPES = {
-    '.html': 'text/html; charset=utf-8',
-    '.js': 'application/javascript',
-    '.css': 'text/css',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.woff': 'application/font-woff',
-    '.woff2': 'application/font-woff2',
-    '.ttf': 'application/font-ttf',
-  };
-
-  return new Promise((resolve) => {
-    const server = http.createServer((req, res) => {
-      const parsedUrl = url.parse(req.url, true);
-      const decodedPathname = decodeURIComponent(parsedUrl.pathname);
-      let filePath = path.join(DIST_PATH, decodedPathname === '/' ? 'index.html' : decodedPathname);
-
-      // 安全检查
-      if (!path.normalize(filePath).startsWith(DIST_PATH)) {
-        res.writeHead(403);
-        res.end('Forbidden');
-        return;
-      }
-
-      fs.readFile(filePath, (err, data) => {
-        if (err) {
-          // 返回 index.html 支持 SPA 路由
-          fs.readFile(path.join(DIST_PATH, 'index.html'), (err, data) => {
-            res.writeHead(err ? 404 : 200, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(err ? 'Not Found' : data);
-          });
-          return;
+// 等待后端服务就绪
+function waitForServer(url, maxRetries = 30, interval = 500) {
+  return new Promise((resolve, reject) => {
+    let retries = 0;
+    const check = () => {
+      http.get(url, () => {
+        resolve();
+      }).on('error', () => {
+        retries++;
+        if (retries >= maxRetries) {
+          reject(new Error('后端服务启动超时'));
+        } else {
+          setTimeout(check, interval);
         }
-        const ext = path.extname(filePath).toLowerCase();
-        res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' });
-        res.end(data);
       });
-    });
-
-    server.listen(port, () => resolve(server));
+    };
+    check();
   });
 }
 
-let mainWindow;
-let server;
-
 async function createWindow() {
   const PORT = 3000;
-  server = await createServer(PORT);
+
+  // 打包后 server 文件通过 asarUnpack 释放到真实文件系统
+  // 以便 child_process.fork 能正常加载 native 模块（better-sqlite3）
+  const serverPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'app.asar.unpacked', 'server', 'index.js')
+    : path.join(__dirname, '..', 'server', 'index.js');
+
+  // 启动 Express 后端（为 Electron 设置生产模式标志）
+  serverProcess = fork(serverPath, [], {
+    env: { ...process.env, NODE_ENV: 'production' },
+    stdio: 'pipe'
+  });
+
+  serverProcess.stdout.on('data', (data) => {
+    console.log(`[服务器] ${data.toString().trim()}`);
+  });
+
+  serverProcess.stderr.on('data', (data) => {
+    console.error(`[服务器错误] ${data.toString().trim()}`);
+  });
+
+  // 等待后端启动完成
+  try {
+    await waitForServer(`http://127.0.0.1:${PORT}/api/health`);
+    console.log('后端服务已就绪');
+  } catch (err) {
+    console.error('后端服务启动失败:', err.message);
+  }
 
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -76,10 +70,8 @@ async function createWindow() {
     icon: path.join(__dirname, '..', 'dist', 'favicon.svg')
   });
 
-  mainWindow.webContents.openDevTools();  // 打开调试窗口
-
-  // 加载页面
-  mainWindow.loadURL(`http://localhost:${PORT}`);
+  // Express 已提供静态文件服务，直接加载
+  mainWindow.loadURL(`http://127.0.0.1:${PORT}`);
 
   // 启动时最大化
   mainWindow.maximize();
@@ -90,9 +82,12 @@ async function createWindow() {
     return { action: 'deny' };
   });
 
-  // 关闭时停止服务器
+  // 关闭窗口时终止后端进程
   mainWindow.on('closed', () => {
-    if (server) server.close();
+    if (serverProcess) {
+      serverProcess.kill();
+      serverProcess = null;
+    }
     mainWindow = null;
   });
 }
@@ -100,7 +95,10 @@ async function createWindow() {
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
-  if (server) server.close();
+  if (serverProcess) {
+    serverProcess.kill();
+    serverProcess = null;
+  }
   if (process.platform !== 'darwin') {
     app.quit();
   }
